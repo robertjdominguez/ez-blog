@@ -1,8 +1,10 @@
-import sampleRequest from './config.ts';
+import { recordVideo } from './recorder/index';
 
 async function main() {
-  const sample = await sampleRequest('Hello!');
-  console.log(sample);
+  console.log(`Recording...`);
+  const video = await recordVideo(10, '.videos/test.mov');
+  console.log(`🛑 Recording stopped`);
+  console.log(video.title);
 }
 
 main();
