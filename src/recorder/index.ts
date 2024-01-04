@@ -12,6 +12,12 @@ type Video = {
 
 export function recordVideo(duration: number, outPath: string): Promise<Video> {
   return new Promise((resolve, reject) => {
+    let remainingTime = duration;
+    const timer = setInterval(() => {
+      process.stdout.write(`Recording... ${remainingTime}s remaining \r`);
+      remainingTime--;
+    }, 1000);
+
     const childProcess = spawn('ffmpeg', [
       '-probesize',
       '50M',
@@ -38,6 +44,9 @@ export function recordVideo(duration: number, outPath: string): Promise<Video> {
     ]);
 
     childProcess.on('close', (code: any) => {
+      clearInterval(timer);
+      process.stdout.clearLine(0);
+      process.stdout.cursorTo(0);
       if (code !== 0) {
         reject(`ffmpeg process exited with code ${code}`);
       } else {
@@ -47,11 +56,13 @@ export function recordVideo(duration: number, outPath: string): Promise<Video> {
           title: getDateString(new Date()),
           filePath: outPath,
         };
+        console.log(`✅ Recording complete`);
         resolve(video);
       }
     });
 
     childProcess.on('error', (error: any) => {
+      clearInterval(timer);
       reject(error);
     });
   });

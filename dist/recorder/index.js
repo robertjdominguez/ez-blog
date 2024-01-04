@@ -6,6 +6,11 @@ const utils_1 = require("./utils");
 const RecorderConfig_1 = require("../config/RecorderConfig");
 function recordVideo(duration, outPath) {
     return new Promise((resolve, reject) => {
+        let remainingTime = duration;
+        const timer = setInterval(() => {
+            process.stdout.write(`Recording... ${remainingTime}s remaining \r`);
+            remainingTime--;
+        }, 1000);
         const childProcess = (0, child_process_1.spawn)('ffmpeg', [
             '-probesize',
             '50M',
@@ -31,6 +36,9 @@ function recordVideo(duration, outPath) {
             outPath,
         ]);
         childProcess.on('close', (code) => {
+            clearInterval(timer);
+            process.stdout.clearLine(0);
+            process.stdout.cursorTo(0);
             if (code !== 0) {
                 reject(`ffmpeg process exited with code ${code}`);
             }
@@ -41,10 +49,12 @@ function recordVideo(duration, outPath) {
                     title: (0, utils_1.getDateString)(new Date()),
                     filePath: outPath,
                 };
+                console.log(`✅ Recording complete`);
                 resolve(video);
             }
         });
         childProcess.on('error', (error) => {
+            clearInterval(timer);
             reject(error);
         });
     });

@@ -13,8 +13,10 @@ export async function stripAudio(videoPath: string, outPath: string): Promise<st
 
     childProcess.on('close', (code: any) => {
       if (code !== 0) {
+        console.log(`❌ Error stripping audio`);
         reject(`ffmpeg process exited with code ${code}`);
       } else {
+        console.log(`✅ Audio stripped`);
         resolve(outPath);
       }
     });
