@@ -5,9 +5,12 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc",
-    "start": "node --no-deprecation dist/index.js",
     "watch": "tsc -w & nodemon --no-deprecation dist/index.js",
-    "test": "jest --watchAll"
+    "test": "jest --watchAll",
+    "start": "node --no-deprecation dist/index.js",
+    "start:q-fancy": "node --no-deprecation dist/index.js -- duration=120 device=3",
+    "start:q-airpods": "node --no-deprecation dist/index.js -- duration=120 device=2",
+    "post": "node --no-deprecation dist/index.js -- post=true"
   },
   "keywords": [],
   "author": "",
@@ -32,6 +35,8 @@
     "dotenv": "^16.3.1",
     "fluent-ffmpeg": "^2.1.2",
     "form-data": "^4.0.0",
+    "gql": "^1.1.2",
+    "graphql-tag": "^2.12.6",
     "node-fetch": "^3.3.2",
     "openai": "^4.24.1"
   }

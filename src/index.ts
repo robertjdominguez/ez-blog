@@ -1,24 +1,34 @@
 import { createFileNameFromDate } from './utils/fileNaming';
-import { recordVideo } from './recorder/index';
-import { stripAudio } from './transcriber/stripper';
+import { args } from './config/Setup';
+import { recordAudio } from './recorder/index';
 import { transcribe } from './transcriber/transcriber';
 import { updateJson } from './transcriber/jsonUpdater';
-
-const fileName: string = createFileNameFromDate(new Date());
-const duration: number = 10;
+import { writePost } from './blogger';
+import { updateJson as updateBlogJson } from './blogger/jsonUpdater';
+import { postBlog } from './poster';
 
 async function main() {
-  // Video
-  const video = await recordVideo(duration, `.videos/${fileName}.mov`);
+  if (args.post === false) {
+    // Create a file name
+    const fileName: string = createFileNameFromDate(new Date());
+    // Recording
+    const audio = await recordAudio(args.duration, `.videos/${fileName}.mp3`);
+    // Transcription
+    const transcription = await transcribe(`.videos/${fileName}.mp3`);
+    // Update JSON
+    const updated = await updateJson(transcription);
+    return updated;
+  }
 
-  // Audio
-  const audio = await stripAudio(video.filePath, `.videos/${fileName}.mp3`);
-
-  // Transcription
-  const transcription = await transcribe(`.videos/${fileName}.mp3`);
-
-  // Update JSON
-  const updated = await updateJson(transcription);
+  if (args.post === true) {
+    // Create a blog post
+    const newPost = await writePost();
+    // Add it to the posts.json file
+    const updated = await updateBlogJson(newPost);
+    // Post it to the blog
+    // const posted = await postBlog(newPost);
+    return updated;
+  }
 }
 
 main();

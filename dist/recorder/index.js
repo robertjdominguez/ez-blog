@@ -1,10 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.recordVideo = void 0;
+exports.recordAudio = void 0;
 const child_process_1 = require("child_process");
 const utils_1 = require("./utils");
-const RecorderConfig_1 = require("../config/RecorderConfig");
-function recordVideo(duration, outPath) {
+const Setup_1 = require("../config/Setup");
+function recordAudio(duration, outPath) {
     return new Promise((resolve, reject) => {
         let remainingTime = duration;
         const timer = setInterval(() => {
@@ -12,26 +12,14 @@ function recordVideo(duration, outPath) {
             remainingTime--;
         }, 1000);
         const childProcess = (0, child_process_1.spawn)('ffmpeg', [
-            '-probesize',
-            '50M',
-            '-analyzeduration',
-            '50M',
             '-t',
             duration.toString(),
             '-f',
             'avfoundation',
-            '-video_size',
-            '3840x2160',
-            '-framerate',
-            '23.980010',
             '-i',
-            `${RecorderConfig_1.VIDEO_DEVICE_NAME}:${RecorderConfig_1.AUDIO_DEVICE_NAME}`,
-            '-c:v',
-            'prores',
-            '-profile:v',
-            '1',
-            '-c:a',
-            'aac',
+            `:${Setup_1.args.deviceName}`,
+            '-acodec',
+            'libmp3lame',
             '-y',
             outPath,
         ]);
@@ -59,4 +47,4 @@ function recordVideo(duration, outPath) {
         });
     });
 }
-exports.recordVideo = recordVideo;
+exports.recordAudio = recordAudio;
