@@ -1,7 +1,7 @@
 **.env
 posts.json
 transcripts.json
-
+dist
 node_modules
 .audio
 coverage
