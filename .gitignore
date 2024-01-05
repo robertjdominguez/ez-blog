@@ -3,5 +3,5 @@ posts.json
 transcripts.json
 
 node_modules
-.videos
+.audio
 coverage

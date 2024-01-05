@@ -12,22 +12,22 @@ async function main() {
     // Create a file name
     const fileName: string = createFileNameFromDate(new Date());
     // Recording
-    const audio = await recordAudio(args.duration, `.videos/${fileName}.mp3`);
+    await recordAudio(args.duration, `.audio/${fileName}.mp3`);
     // Transcription
-    const transcription = await transcribe(`.videos/${fileName}.mp3`);
+    const transcription = await transcribe(`.audio/${fileName}.mp3`);
     // Update JSON
     const updated = await updateJson(transcription);
     return updated;
   }
 
   if (args.post === true) {
-    // Create a blog post
+    // Create a blog post using the past week's transcriptions
     const newPost = await writePost();
     // Add it to the posts.json file
-    const updated = await updateBlogJson(newPost);
+    await updateBlogJson(newPost);
     // Post it to the blog
-    // const posted = await postBlog(newPost);
-    return updated;
+    const posted = await postBlog(newPost);
+    return posted;
   }
 }
 

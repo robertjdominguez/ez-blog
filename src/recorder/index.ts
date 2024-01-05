@@ -1,5 +1,5 @@
 import { spawn } from 'child_process';
-import { getDateString } from './utils';
+import { getDateString, createCommand, command, osArgs } from './utils';
 import { args } from '../config/Setup';
 
 type Recording = {
@@ -17,18 +17,11 @@ export function recordAudio(duration: number, outPath: string): Promise<Recordin
       remainingTime--;
     }, 1000);
 
-    const childProcess = spawn('ffmpeg', [
-      '-t',
-      duration.toString(),
-      '-f',
-      'avfoundation',
-      '-i',
-      `:${args.deviceName}`,
-      '-acodec',
-      'libmp3lame',
-      '-y',
-      outPath,
-    ]);
+    // call createCommand() to get the command and args for the current OS
+    const [command, ...osArgs] = createCommand(outPath, duration, args);
+
+    // This will actually run the command using our args
+    const childProcess = spawn(command, osArgs);
 
     childProcess.on('close', (code: any) => {
       clearInterval(timer);

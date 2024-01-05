@@ -11,18 +11,10 @@ function recordAudio(duration, outPath) {
             process.stdout.write(`Recording... ${remainingTime}s remaining \r`);
             remainingTime--;
         }, 1000);
-        const childProcess = (0, child_process_1.spawn)('ffmpeg', [
-            '-t',
-            duration.toString(),
-            '-f',
-            'avfoundation',
-            '-i',
-            `:${Setup_1.args.deviceName}`,
-            '-acodec',
-            'libmp3lame',
-            '-y',
-            outPath,
-        ]);
+        // call createCommand() to get the command and args for the current OS
+        const [command, ...osArgs] = (0, utils_1.createCommand)(outPath, duration, Setup_1.args);
+        // This will actually run the command using our args
+        const childProcess = (0, child_process_1.spawn)(command, osArgs);
         childProcess.on('close', (code) => {
             clearInterval(timer);
             process.stdout.clearLine(0);
